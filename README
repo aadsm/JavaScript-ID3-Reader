@@ -1,0 +1,113 @@
+JavaScript ID3 Reader
+=====================
+
+This library was originally made by Jacob Seidelin using ID3v1 for demo'ing his BinaryAjax library [http://www.nihilogic.dk/labs/id3/].
+It was then extended by me (António Afonso) to include the ID3v2 tag specification [http://www.id3.org/id3v2.4.0-structure], while I was working at Opera Software, in the context of the Unite Media Player application which was developed using server side JavaScript.
+
+Demo: http://www.aadsm.net/libraries/id3/#demo
+
+Technical Information
+---------------------
+
+This library will only download the relevant data from the mp3 file whenever the webserver supports the HTTP Range feature, otherwise the entire file will be downloaded at the cost of degrading the performance of the library.  
+This library is not complete and there is still some features missing and/or going on:
+
+* Unsynchronisation support
+* CommonJS support
+* Support for other types of charsets, at the moment only latin1, UTF-8 and UTF-16 are supported, these are the ones defined in the specification. However, the usage of local charsets has been common for a long time specially in Russia, Japan and China.
+
+How To Use It
+-------------
+
+In its simplest form:
+
+`ID3.loadTags("filename.mp3", function() {
+    var tags = ID3.getAllTags(filename);
+    alert(tags.artist + " - " + tags.title + ", " + tags.album);
+});`
+
+by specifying specific tags:
+
+`ID3.loadTags("filename.mp3", function() {
+    var tags = ID3.getAllTags(filename);
+    alert(tags.COMM.data + " - " + tags.TCON.data + ", " + tags.WXXX.data);
+},
+["COMM", "TCON", "WXXX"]);`
+
+or even by specifying shortcuts instead of cryptic tags:
+
+`ID3.loadTags("filename.mp3", function() {
+    var tags = ID3.getAllTags(filename);
+    alert(tags.comment + " - " + tags.track + ", " + tags.lyrics);
+},
+["comment", "track", "lyrics"]);`
+
+Documentation
+-------------
+
+`ID3.loadTags(url, cb, [tags])`  
+    `url` - The URL of the mp3 file to read, this must reside on the same domain (document.domain).  
+    `cb` - The callback function to invoke when the tags are loaded.  
+    `tags` - Optional parameter, an array of tags and/or shortcuts to read from the ID3 block. Default value is: `["title", "artist", "album", "track"]`
+    
+`ID3.getAllTags(url)`  
+    `url` - The URL of the mp3 file to read, this must be the same value given to `ID3.loadTags()`.  
+    `return value` - This function will return the following object structure, for IDv1:
+    
+    {
+        version: "1.1",
+        title: string,
+        artist: string,
+        album: string,
+        year: string,
+        comment: string,
+        track: string,
+        genre: string
+    }    
+and for ID3v2:
+
+    {
+        version: "2.<major>.<revision>",
+        major: integer,
+        revision: integer,
+        flags: {
+            unsynchronisation: boolean,
+            extended_header: boolean,
+            experimental_indicator: boolean
+        },
+        size: integer,
+        <frame id>*: {
+            id: integer,
+            size: integer,
+            description: string,
+            data: <frame structure>
+        },
+        <shortcut>*: pointer to <frame id>.data
+    }
+
+### Currently supported frames:
+
+* APIC/PIC: Attached picture
+* COMM/COM: Comments
+* PCNT/CNT: Play counter
+* T*: Text frames
+* USLT/ULT: Unsychronized lyric/text transcription
+
+### Shortcuts:
+
+* title: TIT2/TT2
+* artist: TPE1/TP1
+* album: TALB/TAL
+* year: TYER/TYE
+* comment: COMM/COM
+* track: TRCK/TRK
+* genre: TCON/TCO
+* picture: APIC/PIC
+* lyrics: USLT/ULT
+
+A comprehensive list of all tags defined in the specification can be found [here](http://www.id3.org/id3v2.3.0#head-e4b3c63f836c3eb26a39be082065c21fba4e0acc)
+
+Authors
+-------
+* Jacob Seidelin
+* António Afonso
