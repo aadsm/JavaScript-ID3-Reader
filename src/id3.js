@@ -14,7 +14,8 @@ var ID3 = {};
     
     function getReader(data) {
         // FIXME: improve this detection according to the spec
-        return data.getStringAt(0, 3) == "ID3" ? ID3v2 : ID3v1;
+        return data.getStringAt(4, 7) == "ftypM4A" ? ID4 :
+               (data.getStringAt(0, 3) == "ID3" ? ID3v2 : ID3v1);
     }
     
 	function readFileDataFromAjax(url, callback) {
