@@ -38,7 +38,7 @@ var ID4 = {};
 
     ID4.readID3Range = function(data) {
         return null;
-    }
+    };
 
     ID4.readTagsFromData = function(data) {
         var tag = {};

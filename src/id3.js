@@ -19,31 +19,12 @@ var ID3 = {};
     }
     
 	function readFileDataFromAjax(url, callback) {
-	    // try to load the first 13 bytes (3+10) first and see if we can deduce
-	    // which reader and bytes we need to read from the file.
-	    BinaryAjax(
-			url,
-			function(http) {
-				var reader = getReader(http.binaryResponse);
-				var rawData = http.binaryResponse.getRawData();
-				// Range not supported, we already have the whole file
-			    if( rawData.length > 13 ) {
-			        if (callback) callback(reader, new BinaryFile(rawData, 0, rawData.length));
-			    } else {
-				    var range = reader.readID3Range(http.binaryResponse);
-			        BinaryAjax(
-			            url,
-			            function(http) {
-			                if (callback) callback(reader, http.binaryResponse);
-			            },
-			            null,
-			            range
-			        );
-			    }
-			},
-			null,
-			[0,13]
-		);
+	    BufferedBinaryAjax(url, function(http) {
+			var reader = getReader(http.binaryResponse);
+			var range = reader.readID3Range(http.binaryResponse);
+		    if( range ) http.binaryResponse.loadRange(range);
+		    if( callback ) callback(reader, http.binaryResponse);
+		});
 	}
 
     function readFileDataFromFileSystem(url, callback) {
@@ -60,6 +41,7 @@ var ID3 = {};
     ID3.loadTags = function(url, cb, tags) {
 		function read(reader, data) {
 	        var tagsFound = reader.readTagsFromData(data, tags);
+	        //console.log("Downloaded data: " + data.getDownloadedBytesCount() + "bytes");
 	        // FIXME: add, don't override
 			files[url] = tagsFound;
 			if (cb) cb();
