@@ -7,6 +7,13 @@
  * Copyright (c) 2008 Jacob Seidelin, cupboy@gmail.com, http://blog.nihilogic.dk/
  */
 
+/**
+ * This function prepares a BufferedBinaryFile object for reading the file pointed by the URL given.
+ *
+ * @param {String} strUrl The URL with the location of the file to be read.
+ * @param {function({binaryResponse: BufferedBinaryFile, fileSize: number)} fncCallback The function that will be invoked when the BufferedBinaryFile is ready to be used.
+ * @param {function()} fncError The function that will be invoked when an error occrus, for instance, the file pointed by the URL is doesn't exist.
+ */
 var BufferedBinaryAjax = function(strUrl, fncCallback, fncError) {
     function sendRequest(strURL, fncCallback, fncError, aRange, bAcceptRanges, iFileSize, bAsync) {
 		var oHTTP = createRequest();
@@ -105,14 +112,25 @@ var BufferedBinaryAjax = function(strUrl, fncCallback, fncError) {
 		}
 	}
     
-    function BufferedBinaryFile(iLength, blockSize, blockRadius) {
+    /**
+     * Creates a new BufferedBinaryFile that will download chunks of the file pointed by the URL given only on a per need basis.
+     *
+     * @param {String} strUrl The URL with the location of the file to be read.
+     * @param {number} iLength The size of the file.
+     * @param {number} [blockSize=2048] The size of the chunk that will be downloaded when data is read.
+     * @param {number} [blockRadius=0] The number of chunks, immediately after and before the chunk needed, that will also be downloaded.
+     *
+     * @class Reads a remote file without having to download it all.
+     * @augments BinaryFile
+     */
+    function BufferedBinaryFile(strUrl, iLength, blockSize, blockRadius) {
         var undefined;
         var downloadedBytesCount = 0;
         var binaryFile = new BinaryFile("", 0, iLength);
         var blocks = [];
         
         blockSize = blockSize || 1024*2;
-        blockRadius = blockRadius === undefined || 0;
+        blockRadius = blockRadius === undefined ? 0 : blockRadius;
         blockTotal = ~~(iLength/(blockSize+1)) + 1;
         
         function getBlockRangeForByteRange(range) {
@@ -149,10 +167,19 @@ var BufferedBinaryAjax = function(strUrl, fncCallback, fncError) {
             sendRequest(
                 strUrl,
                 function(http) {
+                    var size = parseInt(http.getResponseHeader("Content-Length"), 10);
+                    // Range header not supported
+                    if( size == iLength ) {
+                        blockRange[0] = 0;
+                        blockRange[1] = blockTotal-1;
+                        range[0] = 0;
+                        range[1] = iLength-1;
+                    }
                     var block = {
                         data: http.responseBody || http.responseText,
                         offset: range[0]
                     };
+                    
                     for( var i = blockRange[0]; i <= blockRange[1]; i++ ) {
                         blocks[i] = block;
                     }
@@ -187,10 +214,20 @@ var BufferedBinaryAjax = function(strUrl, fncCallback, fncError) {
 		    }
 		};
 		
+		/**
+		 * Gets the number of total bytes that have been downloaded.
+		 *
+		 * @returns The number of total bytes that have been downloaded.
+		 */
 		this.getDownloadedBytesCount = function() {
 		    return downloadedBytesCount;
 		};
 		
+		/**
+		 * Downloads the byte range given. Useful for preloading.
+		 *
+		 * @param {Array} range Two element array that denotes the first byte to be read on the first position and the last byte to be read on the last position. A range of [2, 5] will download bytes 2,3,4 and 5.
+		 */
 		this.loadRange = function(range) {
 		    var blockRange = getBlockRangeForByteRange(range);
 		    waitForBlocks(blockRange);
@@ -203,7 +240,7 @@ var BufferedBinaryAjax = function(strUrl, fncCallback, fncError) {
 			function(oHTTP) {
 				var iLength = parseInt(oHTTP.getResponseHeader("Content-Length"),10) || -1;
 				fncCallback({
-				    binaryResponse: new BufferedBinaryFile(iLength),
+				    binaryResponse: new BufferedBinaryFile(strUrl, iLength),
 				    fileSize: iLength
 				});
 			}
@@ -220,20 +257,20 @@ var BinaryFile = function(strData, iDataOffset, iDataLength) {
 
 	this.getRawData = function() {
 		return data;
-	}
+	};
 
 	if (typeof strData == "string") {
 		dataLength = iDataLength || data.length;
 
 		this.getByteAt = function(iOffset) {
 			return data.charCodeAt(iOffset + dataOffset) & 0xFF;
-		}
+		};
 	} else if (typeof strData == "unknown") {
 		dataLength = iDataLength || IEBinary_getLength(data);
 
 		this.getByteAt = function(iOffset) {
 			return IEBinary_getByteAt(data, iOffset + dataOffset);
-		}
+		};
 	}
     // @aadsm
     this.getBytesAt = function(iOffset, iLength) {
@@ -242,17 +279,17 @@ var BinaryFile = function(strData, iDataOffset, iDataLength) {
             bytes[i] = this.getByteAt(iOffset+i);
         }
         return bytes;
-    }
+    };
 
 	this.getLength = function() {
 		return dataLength;
-	}
+	};
 
     // @aadsm
     this.isBitSetAt = function(iOffset, iBit) {
         var iByte = this.getByteAt(iOffset);
         return (iByte & (1 << iBit)) != 0;
-    }
+    };
 
 	this.getSByteAt = function(iOffset) {
 		var iByte = this.getByteAt(iOffset);
@@ -260,22 +297,22 @@ var BinaryFile = function(strData, iDataOffset, iDataLength) {
 			return iByte - 256;
 		else
 			return iByte;
-	}
+	};
 
 	this.getShortAt = function(iOffset, bBigEndian) {
 		var iShort = bBigEndian ? 
 			(this.getByteAt(iOffset) << 8) + this.getByteAt(iOffset + 1)
-			: (this.getByteAt(iOffset + 1) << 8) + this.getByteAt(iOffset)
+			: (this.getByteAt(iOffset + 1) << 8) + this.getByteAt(iOffset);
 		if (iShort < 0) iShort += 65536;
 		return iShort;
-	}
+	};
 	this.getSShortAt = function(iOffset, bBigEndian) {
 		var iUShort = this.getShortAt(iOffset, bBigEndian);
 		if (iUShort > 32767)
 			return iUShort - 65536;
 		else
 			return iUShort;
-	}
+	};
 	this.getLongAt = function(iOffset, bBigEndian) {
 		var iByte1 = this.getByteAt(iOffset),
 			iByte2 = this.getByteAt(iOffset + 1),
@@ -287,14 +324,14 @@ var BinaryFile = function(strData, iDataOffset, iDataLength) {
 			: (((((iByte4 << 8) + iByte3) << 8) + iByte2) << 8) + iByte1;
 		if (iLong < 0) iLong += 4294967296;
 		return iLong;
-	}
+	};
 	this.getSLongAt = function(iOffset, bBigEndian) {
 		var iULong = this.getLongAt(iOffset, bBigEndian);
 		if (iULong > 2147483647)
 			return iULong - 4294967296;
 		else
 			return iULong;
-	}
+	};
 	// @aadsm
 	this.getInteger24At = function(iOffset, bBigEndian) {
         var iByte1 = this.getByteAt(iOffset),
@@ -306,14 +343,14 @@ var BinaryFile = function(strData, iDataOffset, iDataLength) {
 			: ((((iByte3 << 8) + iByte2) << 8) + iByte1);
 		if (iInteger < 0) iInteger += 16777216;
 		return iInteger;
-    }
+    };
 	this.getStringAt = function(iOffset, iLength) {
 		var aStr = [];
 		for (var i=iOffset,j=0;i<iOffset+iLength;i++,j++) {
 			aStr[j] = String.fromCharCode(this.getByteAt(i));
 		}
 		return aStr.join("");
-	}
+	};
 	// @aadsm
 	this.getStringWithCharsetAt = function(iOffset, iLength, iCharset) {
 		var bytes = this.getBytesAt(iOffset, iLength);
@@ -336,15 +373,15 @@ var BinaryFile = function(strData, iDataOffset, iDataLength) {
 		}
 		
 		return sString;
-	}
+	};
 
 	this.getCharAt = function(iOffset) {
 		return String.fromCharCode(this.getByteAt(iOffset));
-	}
+	};
 	this.toBase64 = function() {
 		return window.btoa(data);
-	}
+	};
 	this.fromBase64 = function(strBase64) {
 		data = window.atob(strBase64);
-	}
-}
+	};
+};

@@ -4,13 +4,15 @@ JavaScript ID3 Reader
 This library was originally made by Jacob Seidelin using ID3v1 for demo'ing his BinaryAjax library [http://www.nihilogic.dk/labs/id3/].
 It was then extended by me (António Afonso) to include the ID3v2 tag specification [http://www.id3.org/id3v2.4.0-structure], while I was working at Opera Software, in the context of the Unite Media Player application which was developed using server side JavaScript.
 Joshua Kifer implemented the tag reader for the QuickTime metadata information found in aac files.
+A new BufferedBinaryFile was created that extends BinaryFile in a way that only required data will be downloaded from the server. This makes it possible to read tag structures such as the Quicktime metadata without having to download the entire file as it was happening in previous versions of this library.
 
 Demo: http://www.aadsm.net/libraries/id3/#demo
 
 Technical Information
 ---------------------
 
-This library will only download the relevant data from the mp3 file whenever the webserver supports the HTTP Range feature, otherwise the entire file will be downloaded at the cost of degrading the performance of the library.  
+This library will only download the relevant data from the mp3 file whenever the webserver supports the HTTP Range feature, otherwise the entire file will be downloaded at the cost of degrading the performance of the library.
+Another caveat is on the Opera browser, since it lacks support for setting the Range header, the entire file will be downloaded.
 This library is not complete and there is still some features missing and/or going on:
 
 * Unsynchronisation support
@@ -65,7 +67,7 @@ Documentation
         track: string,
         genre: string
     }    
-and for ID3v2:
+for ID3v2:
 
     {
         version: "2.<major>.<revision>",
@@ -86,7 +88,29 @@ and for ID3v2:
         <shortcut>*: pointer to <frame id>.data
     }
 
-### Currently supported frames:
+for AAC:
+
+    {
+        album: string,
+        artist: string,
+        year: integer,
+        title: string,
+        genre: string,
+        track: integer,
+        composer': string,
+        encoder: string,
+        copyright: string,
+        picture: {
+            format: string,
+            data: bytes[]
+        },
+        grouping: string,
+        keyword: string,
+        lyrics: string,
+        genre: string
+    }
+
+### Currently supported frames on ID3:
 
 * APIC/PIC: Attached picture
 * COMM/COM: Comments
