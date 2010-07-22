@@ -3,9 +3,9 @@
  * Modified by António Afonso <antonio.afonso gmail.com>
  */
 
-var ID3v2 = {};
-
-(function() {
+(function(ns) {
+    var ID3v2 = ns.ID3v2 = {};
+    
     ID3v2.readFrameData = {};
     ID3v2.frames = {
         // v2.2
@@ -369,4 +369,7 @@ var ID3v2 = {};
     	
     	return id3;
     };
-})();
+    
+    // Export functions for closure compiler
+    ns["ID3v2"] = ID3v2;
+})(this);

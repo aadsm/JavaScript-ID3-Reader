@@ -7,9 +7,8 @@
  * Modified by António Afonso (antonio.afonso gmail.com)
  */
 
-var ID3v1 = {};
-
-(function() {
+(function(ns) {
+    var ID3v1 = ns.ID3v1 = {};
     var genres = [
     	"Blues","Classic Rock","Country","Dance","Disco","Funk","Grunge",
     	"Hip-Hop","Jazz","Metal","New Age","Oldies","Other","Pop","R&B",
@@ -78,4 +77,7 @@ var ID3v1 = {};
     		return {};
     	}
     };
-})();
+    
+    // Export functions for closure compiler
+    ns["ID3v1"] = ns.ID3v1;
+})(this);

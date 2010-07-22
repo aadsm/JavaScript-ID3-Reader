@@ -1,17 +1,16 @@
-/*
+/**
  * Buffered Binary Ajax 0.2.1
  * Copyright (c) 2010 António Afonso, antonio.afonso gmail, http://www.aadsm.net/
  * MIT License [http://www.opensource.org/licenses/mit-license.php]
  *
  * Adapted from Binary Ajax 0.1.5 
- * Copyright (c) 2008 Jacob Seidelin, cupboy@gmail.com, http://blog.nihilogic.dk/
  */
 
 /**
  * This function prepares a BufferedBinaryFile object for reading the file pointed by the URL given.
  *
  * @param {String} strUrl The URL with the location of the file to be read.
- * @param {function({binaryResponse: BufferedBinaryFile, fileSize: number)} fncCallback The function that will be invoked when the BufferedBinaryFile is ready to be used.
+ * @param {function({binaryResponse: BufferedBinaryFile, fileSize: number})} fncCallback The function that will be invoked when the BufferedBinaryFile is ready to be used.
  * @param {function()} fncError The function that will be invoked when an error occrus, for instance, the file pointed by the URL is doesn't exist.
  */
 var BufferedBinaryAjax = function(strUrl, fncCallback, fncError) {
@@ -33,8 +32,8 @@ var BufferedBinaryAjax = function(strUrl, fncCallback, fncError) {
 					oHTTP.onload = function() {
 
 						if (oHTTP.status == "200" || oHTTP.status == "206") {
-							this.fileSize = iFileSize || this.getResponseHeader("Content-Length");
-							fncCallback(this);
+							oHTTP.fileSize = iFileSize || oHTTP.getResponseHeader("Content-Length");
+							fncCallback(oHTTP);
 						} else {
 							if (fncError) fncError();
 						}
@@ -44,8 +43,8 @@ var BufferedBinaryAjax = function(strUrl, fncCallback, fncError) {
 					oHTTP.onreadystatechange = function() {
 						if (oHTTP.readyState == 4) {
 							if (oHTTP.status == "200" || oHTTP.status == "206") {
-								this.fileSize = iFileSize || this.getResponseHeader("Content-Length");
-								fncCallback(this);
+								oHTTP.fileSize = iFileSize || oHTTP.getResponseHeader("Content-Length");
+								fncCallback(oHTTP);
 							} else {
 								if (fncError) fncError();
 							}
@@ -113,14 +112,16 @@ var BufferedBinaryAjax = function(strUrl, fncCallback, fncError) {
 	}
     
     /**
+     * @class Reads a remote file without having to download it all.
+     *
      * Creates a new BufferedBinaryFile that will download chunks of the file pointed by the URL given only on a per need basis.
      *
-     * @param {String} strUrl The URL with the location of the file to be read.
+     * @param {string} strUrl The URL with the location of the file to be read.
      * @param {number} iLength The size of the file.
      * @param {number} [blockSize=2048] The size of the chunk that will be downloaded when data is read.
      * @param {number} [blockRadius=0] The number of chunks, immediately after and before the chunk needed, that will also be downloaded.
      *
-     * @class Reads a remote file without having to download it all.
+     * @constructor
      * @augments BinaryFile
      */
     function BufferedBinaryFile(strUrl, iLength, blockSize, blockRadius) {
@@ -250,7 +251,10 @@ var BufferedBinaryAjax = function(strUrl, fncCallback, fncError) {
     init();
 };
 
-var BinaryFile = function(strData, iDataOffset, iDataLength) {
+/**
+ * @constructor
+ */
+function BinaryFile(strData, iDataOffset, iDataLength) {
 	var data = strData;
 	var dataOffset = iDataOffset || 0;
 	var dataLength = 0;
@@ -384,4 +388,4 @@ var BinaryFile = function(strData, iDataOffset, iDataLength) {
 	this.fromBase64 = function(strBase64) {
 		data = window.atob(strBase64);
 	};
-};
+}

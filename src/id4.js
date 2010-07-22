@@ -7,9 +7,9 @@
  * MIT License [http://www.opensource.org/licenses/mit-license.php]
  */
 
-var ID4 = {};
-
-(function() {
+(function(ns) {
+    var ID4 = ns.ID4 = {};
+    
     ID4.types = {
         '0'     : 'uint8',
         '1'     : 'text',
@@ -102,4 +102,7 @@ var ID4 = {};
             seek += atomSize;
         }
     }
-})();
+    
+    // Export functions for closure compiler
+    ns["ID4"] = ns.ID4;
+})(this);

@@ -7,9 +7,9 @@
  * Modified by António Afonso <antonio.afonso gmail.com>
  */
 
-var ID3 = {};
-
-(function() {
+(function(ns) {
+    var ID3 = ns.ID3 = {};
+    
 	var files = [];
     
     function getReader(data) {
@@ -70,6 +70,11 @@ var ID3 = {};
 		if (!files[url]) return null;
 
 		return files[url][tag];
-	}	
-})();
-
+	}
+	
+	// Export functions for closure compiler
+	ns["ID3"] = ns.ID3;
+	ID3["loadTags"] = ID3.loadTags;
+	ID3["getAllTags"] = ID3.getAllTags;
+	ID3["getTag"] = ID3.getTag;
+})(this);
