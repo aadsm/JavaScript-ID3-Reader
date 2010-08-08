@@ -131,8 +131,8 @@ var BufferedBinaryAjax = function(strUrl, fncCallback, fncError) {
         var blocks = [];
         
         blockSize = blockSize || 1024*2;
-        blockRadius = blockRadius === undefined ? 0 : blockRadius;
-        blockTotal = ~~(iLength/(blockSize+1)) + 1;
+        blockRadius = (typeof blockRadius === "undefined") ? 0 : blockRadius;
+        blockTotal = ~~((iLength-1)/blockSize) + 1;
         
         function getBlockRangeForByteRange(range) {
             var blockStart = ~~(range[0]/blockSize) - blockRadius;
