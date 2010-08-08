@@ -64,14 +64,14 @@
     		}
 
     		return {
-    		    version : '1.1',
-    			title : title,
-    			artist : artist,
-    			album : album,
-    			year : year,
-    			comment : comment,
-    			track : track,
-    			genre : genre
+    		    "version" : '1.1',
+    			"title" : title,
+    			"artist" : artist,
+    			"album" : album,
+    			"year" : year,
+    			"comment" : comment,
+    			"track" : track,
+    			"genre" : genre
     		}
     	} else {
     		return {};
