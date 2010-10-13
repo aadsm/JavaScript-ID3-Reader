@@ -11,21 +11,32 @@
     var ID3 = ns.ID3 = {};
     
 	var files = [];
+    // location of the format identifier
+    var formatIDRange = [0, 7];
     
+    /**
+     * Finds out the tag format of this data and returns the appropriate
+     * reader.
+     */
     function getReader(data) {
         // FIXME: improve this detection according to the spec
         return data.getStringAt(4, 7) == "ftypM4A" ? ID4 :
                (data.getStringAt(0, 3) == "ID3" ? ID3v2 : ID3v1);
     }
     
-	function readFileDataFromAjax(url, callback) {
-	    BufferedBinaryAjax(url, function(http) {
-			var reader = getReader(http.binaryResponse);
-			var range = reader.readID3Range(http.binaryResponse);
-		    if( range ) http.binaryResponse.loadRange(range);
-		    if( callback ) callback(reader, http.binaryResponse);
-		});
-	}
+    function readFileDataFromAjax(url, callback) {
+        BufferedBinaryAjax(url, function(http) {
+            var response = http.binaryResponse;
+            
+            // preload the format identifier
+            response.loadRange(formatIDRange, function() {
+                var reader = getReader(response);
+                reader.loadData(response, function() {
+                    if( callback ) callback(reader, response);
+                });
+            });
+        });
+    }
 
     function readFileDataFromFileSystem(url, callback) {
         ReadFile(

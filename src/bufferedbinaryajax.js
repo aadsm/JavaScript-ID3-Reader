@@ -152,16 +152,19 @@ var BufferedBinaryAjax = function(strUrl, fncCallback, fncError) {
             return blocks[~~(offset/blockSize)];
         }
         
-        function waitForBlocks(blockRange) {
+        /**
+         * @param {?function()} callback If a function is passed then this function will be asynchronous and the callback invoked when the blocks have been loaded, otherwise it blocks script execution until the request is completed.
+         */
+        function waitForBlocks(blockRange, callback) {
             // Filter out already downloaded blocks or return if found out that
             // the entire block range has already been downloaded.
             while( blocks[blockRange[0]] ) {
                 blockRange[0]++;
-                if( blockRange[0] > blockRange[1] ) return;
+                if( blockRange[0] > blockRange[1] ) return callback ? callback() : undefined;
             }
             while( blocks[blockRange[1]] ) {
                 blockRange[1]--;
-                if( blockRange[0] > blockRange[1] ) return;
+                if( blockRange[0] > blockRange[1] ) return callback ? callback() : undefined;
             }
             var range = [blockRange[0]*blockSize, (blockRange[1]+1)*blockSize-1];
             //console.log("Getting: " + range[0] + " to " +  range[1]);
@@ -185,12 +188,13 @@ var BufferedBinaryAjax = function(strUrl, fncCallback, fncError) {
                         blocks[i] = block;
                     }
                     downloadedBytesCount += range[1] - range[0] + 1;
+                    if (callback) callback();
                 },
                 fncError,
                 range,
                 "bytes",
                 undefined,
-                false
+                !!callback
             );
         }
         
@@ -228,10 +232,11 @@ var BufferedBinaryAjax = function(strUrl, fncCallback, fncError) {
 		 * Downloads the byte range given. Useful for preloading.
 		 *
 		 * @param {Array} range Two element array that denotes the first byte to be read on the first position and the last byte to be read on the last position. A range of [2, 5] will download bytes 2,3,4 and 5.
+		 * @param {?function()} callback The function to invoke when the blocks have been downloaded, this makes this call asynchronous.
 		 */
-		this.loadRange = function(range) {
+		this.loadRange = function(range, callback) {
 		    var blockRange = getBlockRangeForByteRange(range);
-		    waitForBlocks(blockRange);
+		    waitForBlocks(blockRange, callback);
 		};
     }
     

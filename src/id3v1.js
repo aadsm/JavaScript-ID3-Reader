@@ -34,8 +34,9 @@
     	"Duet","Punk Rock","Drum Solo","Acapella","Euro-House","Dance Hall"
     ];
 
-    ID3v1.readID3Range = function() {
-        return [-128, 128];
+    ID3v1.loadData = function(data, callback) {
+        var length = data.getLength();
+        data.loadRange([length-128-1, length], callback);
     }
 
     ID3v1.readTagsFromData = function(data) {

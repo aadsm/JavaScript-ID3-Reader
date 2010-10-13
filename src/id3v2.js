@@ -320,9 +320,9 @@
         }
     }
     
-    ID3v2.readID3Range = function(data) {
-        return [0, readSynchsafeInteger32At(6, data)];
-    }
+    ID3v2.loadData = function(data, callback) {
+        data.loadRange([0, readSynchsafeInteger32At(6, data)], callback);
+    };
     
     // http://www.id3.org/id3v2.3.0
     ID3v2.readTagsFromData = function(data, tags) {
