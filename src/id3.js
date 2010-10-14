@@ -10,82 +10,71 @@
 (function(ns) {
     var ID3 = ns.ID3 = {};
     
-	var files = [];
+    var _files = {};
     // location of the format identifier
-    var formatIDRange = [0, 7];
+    var _formatIDRange = [0, 7];
     
     /**
      * Finds out the tag format of this data and returns the appropriate
      * reader.
      */
-    function getReader(data) {
+    function getTagReader(data) {
         // FIXME: improve this detection according to the spec
         return data.getStringAt(4, 7) == "ftypM4A" ? ID4 :
                (data.getStringAt(0, 3) == "ID3" ? ID3v2 : ID3v1);
     }
     
-    function readFileDataFromAjax(url, callback) {
-        BufferedBinaryAjax(url, function(http) {
-            var response = http.binaryResponse;
-            
+    function readTags(reader, data, url, tags) {
+        var tagsFound = reader.readTagsFromData(data, tags);
+        //console.log("Downloaded data: " + data.getDownloadedBytesCount() + "bytes");
+        var tags = _files[url] || {};
+        for( var tag in tagsFound ) if( tagsFound.hasOwnProperty(tag) ) {
+            tags[tag] = tagsFound[tag];
+        }
+        _files[url] = tags;
+    }
+
+    /**
+     * @param {string} url The location of the sound file to read.
+     * @param {function()} cb The callback function to be invoked when all tags have been read.
+     * @param {{tags: Array.<string>, dataReader: function(string, function(BinaryReader))}} options The set of options that can specify the tags to be read and the dataReader to use in order to read the file located at url.
+     */
+    ID3.loadTags = function(url, cb, options) {
+        options = options || {};
+        var dataReader = options["dataReader"] || BufferedBinaryAjax;
+        
+        dataReader(url, function(data) {
             // preload the format identifier
-            response.loadRange(formatIDRange, function() {
-                var reader = getReader(response);
-                reader.loadData(response, function() {
-                    if( callback ) callback(reader, response);
+            data.loadRange(_formatIDRange, function() {
+                var reader = getTagReader(data);
+                reader.loadData(data, function() {
+                    readTags(reader, data, url, options["tags"]);
+                    if( cb ) cb();
                 });
             });
-        });
-    }
+        });     
+    };
 
-    function readFileDataFromFileSystem(url, callback) {
-        ReadFile(
-            url,
-            function(file) {
-                var reader = getReader(file);
-				if (callback) callback(reader, file);
-				file.close();
-            }
-        )
-    }
-    
-    ID3.loadTags = function(url, cb, tags) {
-		function read(reader, data) {
-	        var tagsFound = reader.readTagsFromData(data, tags);
-	        //console.log("Downloaded data: " + data.getDownloadedBytesCount() + "bytes");
-	        // FIXME: add, don't override
-			files[url] = tagsFound;
-			if (cb) cb();
-	    }
-	    
-	    // FIXME: should be able to receive a string instead
-		if( /^mountpoint:\/\//.test(url) ) {
-		    readFileDataFromFileSystem(url, read);
-		} else {
-		    readFileDataFromAjax(url, read);
-		}
-	}
-
-	ID3.getAllTags = function(url) {
-		if (!files[url]) return null;
+    ID3.getAllTags = function(url) {
+        if (!_files[url]) return null;
         
-		var tags = {};
-		for (var a in files[url]) {
-			if (files[url].hasOwnProperty(a))
-				tags[a] = files[url][a];
-		}
-		return tags;
-	}
+        var tags = {};
+        for (var a in _files[url]) {
+            if (_files[url].hasOwnProperty(a))
+                tags[a] = _files[url][a];
+        }
+        return tags;
+    };
 
-	ID3.getTag = function(url, tag) {
-		if (!files[url]) return null;
+    ID3.getTag = function(url, tag) {
+        if (!_files[url]) return null;
 
-		return files[url][tag];
-	}
-	
-	// Export functions for closure compiler
-	ns["ID3"] = ns.ID3;
-	ID3["loadTags"] = ID3.loadTags;
-	ID3["getAllTags"] = ID3.getAllTags;
-	ID3["getTag"] = ID3.getTag;
+        return _files[url][tag];
+    };
+    
+    // Export functions for closure compiler
+    ns["ID3"] = ns.ID3;
+    ID3["loadTags"] = ID3.loadTags;
+    ID3["getAllTags"] = ID3.getAllTags;
+    ID3["getTag"] = ID3.getTag;
 })(this);

@@ -216,7 +216,7 @@
     {
         var frames = {};
         var frameDataSize;
-        var major = id3header.major;
+        var major = id3header["major"];
         
         tags = getTagsFromShortcuts(tags || _defaultShortcuts);
         
@@ -343,18 +343,17 @@
         }
 
         var id3 = {
-    	    version : '2.' + major + '.' + revision,
-    	    major : major,
-    	    revision : revision,
-    	    flags : {
-    	        unsynchronisation : unsynch,
-    	        extended_header : xheader,
-    	        experimental_indicator : xindicator
+    	    "version" : '2.' + major + '.' + revision,
+    	    "major" : major,
+    	    "revision" : revision,
+    	    "flags" : {
+    	        "unsynchronisation" : unsynch,
+    	        "extended_header" : xheader,
+    	        "experimental_indicator" : xindicator
     	    },
-    	    size : size
+    	    "size" : size
     	};
         var frames = unsynch ? {} : readFrames(offset, size-10, data, id3, tags);
-    	
     	// create shortcuts for most common data
     	for( var name in _shortcuts ) if(_shortcuts.hasOwnProperty(name)) {
     	    var data = getFrameData( frames, _shortcuts[name] );

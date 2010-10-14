@@ -35,7 +35,7 @@ by specifying specific tags:
     var tags = ID3.getAllTags(filename);
     alert(tags.COMM.data + " - " + tags.TCON.data + ", " + tags.WXXX.data);
 },
-["COMM", "TCON", "WXXX"]);`
+{tags: ["COMM", "TCON", "WXXX"]});`
 
 or even by specifying shortcuts instead of cryptic tags:
 
@@ -43,15 +43,16 @@ or even by specifying shortcuts instead of cryptic tags:
     var tags = ID3.getAllTags(filename);
     alert(tags.comment + " - " + tags.track + ", " + tags.lyrics);
 },
-["comment", "track", "lyrics"]);`
+{tags: ["comment", "track", "lyrics"]});`
 
 Documentation
 -------------
 
-`ID3.loadTags(url, cb, [tags])`  
+`ID3.loadTags(url, cb, [options])`  
     `url` - The URL of the mp3 file to read, this must reside on the same domain (document.domain).  
     `cb` - The callback function to invoke when the tags are loaded.  
-    `tags` - Optional parameter, an array of tags and/or shortcuts to read from the ID3 block. Default value is: `["title", "artist", "album", "track"]`
+    `options` - Optional parameters.
+    `options.tags` - The array of tags and/or shortcuts to read from the ID3 block. Default value is: `["title", "artist", "album", "track"]`
     
 `ID3.getAllTags(url)`  
     `url` - The URL of the mp3 file to read, this must be the same value given to `ID3.loadTags()`.  

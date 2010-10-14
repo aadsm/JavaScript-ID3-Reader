@@ -245,10 +245,7 @@ var BufferedBinaryAjax = function(strUrl, fncCallback, fncError) {
 			strUrl, 
 			function(oHTTP) {
 				var iLength = parseInt(oHTTP.getResponseHeader("Content-Length"),10) || -1;
-				fncCallback({
-				    binaryResponse: new BufferedBinaryFile(strUrl, iLength),
-				    fileSize: iLength
-				});
+				fncCallback(new BufferedBinaryFile(strUrl, iLength));
 			}
 		);
     }
