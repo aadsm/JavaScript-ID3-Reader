@@ -96,10 +96,10 @@
         offset += 1 + desc.bytesReadCount;
         
         return {
-            format : format.toString(),
-            type : type,
-            description : desc.toString(),
-            data : data.getBytesAt(offset, (start+length) - offset)
+            "format" : format.toString(),
+            "type" : type,
+            "description" : desc.toString(),
+            "data" : data.getBytesAt(offset, (start+length) - offset)
         };
     };
     
