@@ -390,6 +390,10 @@ function BinaryFile(strData, iDataOffset, iDataLength) {
 	this.fromBase64 = function(strBase64) {
 		data = window.atob(strBase64);
 	};
+	
+    this.loadRange = function(range, callback) {
+        callback();
+    };
 }
 
 document.write(
