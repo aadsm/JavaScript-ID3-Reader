@@ -34,6 +34,14 @@
         _files[url] = tags;
     }
 
+    ID3.clearTags = function(url) {
+        delete _files[url];
+    };
+
+    ID3.clearAll = function() {
+        _files = {};
+    };
+
     /**
      * @param {string} url The location of the sound file to read.
      * @param {function()} cb The callback function to be invoked when all tags have been read.
@@ -77,4 +85,6 @@
     ID3["loadTags"] = ID3.loadTags;
     ID3["getAllTags"] = ID3.getAllTags;
     ID3["getTag"] = ID3.getTag;
+    ID3["clearTags"] = ID3.clearTags;
+    ID3["clearAll"] = ID3.clearAll;
 })(this);
