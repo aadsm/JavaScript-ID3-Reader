@@ -47,6 +47,11 @@ ID3.loadTags("filename.mp3", function() {
 },
 {tags: ["comment", "track", "lyrics"]});
 ```
+Example
+-------
+See `/example` for additional information.
+Besides open http://www.aadsm.net/libraries/id3/ for a live example.
+
 Documentation
 -------------
 
