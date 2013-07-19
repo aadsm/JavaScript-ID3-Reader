@@ -12,16 +12,47 @@
 
 <body>
   <div>
+    <input type="file" id="file" onchange="loadFile(this)">
     <p id="title"></p>
     <p id="artist"></p>
     <img id="picture" src="" alt= "picture extracted from ID3" />
   </div>
-  
+
   <script>
+    /**
+     * Loading the tags using XHR.
+     */
     //sample.mp3 sits on your domain
-    ID3.loadTags("sample.mp3", function() {  
-      var tags = ID3.getAllTags("sample.mp3");
-      console.log(tags); 
+    ID3.loadTags("sample.mp3", function() {
+      showTags("sample.mp3");
+    },
+    {tags: ["title","artist","picture"]});
+
+    /**
+     * Loading the tags using the FileAPI.
+     */
+    function loadFile(input) {
+      var file = input.files[0],
+        url = file.urn || file.name,
+        reader = new FileReader();
+
+      reader.onload = function(event) {
+        ID3.loadTags(url, function() {
+          showTags(url);
+        }, {
+          tags: ["title","artist","picture"],
+          dataReader: FileAPIReader(file)
+        });
+      };
+      reader.readAsArrayBuffer(file);
+    }
+
+    /**
+     * Generic function to get the tags after they have been loaded.
+     */
+    function showTags(url) {
+      var tags = ID3.getAllTags(url);
+      console.log(tags);
       document.getElementById('title').innerHTML = tags.title;
       document.getElementById('artist').innerHTML = tags.artist;
       var image = tags.picture;
@@ -34,9 +65,7 @@
       } else {
         document.getElementById('picture').style.display = "none";
       }
-
-    },
-    {tags: ["title","artist","picture"]});
+    }
   </script>
 </body>
 </html>
