@@ -277,6 +277,15 @@ function BinaryFile(strData, iDataOffset, iDataLength) {
 		this.getByteAt = function(iOffset) {
 			return IEBinary_getByteAt(data, iOffset + dataOffset);
 		};
+	} else if (window.ArrayBuffer && strData instanceof ArrayBuffer) {
+        data = new Uint8Array(strData);
+        dataLength = iDataLength || data.length;
+
+		this.getByteAt = function(iOffset) {
+			return data[iOffset + dataOffset];
+		};
+	} else {
+	    throw new Error("Unknown data type: " + typeof strData);
 	}
     // @aadsm
     this.getBytesAt = function(iOffset, iLength) {
