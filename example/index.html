@@ -33,18 +33,14 @@
      */
     function loadFile(input) {
       var file = input.files[0],
-        url = file.urn || file.name,
-        reader = new FileReader();
+        url = file.urn || file.name;
 
-      reader.onload = function(event) {
-        ID3.loadTags(url, function() {
-          showTags(url);
-        }, {
-          tags: ["title","artist","picture"],
-          dataReader: FileAPIReader(file)
-        });
-      };
-      reader.readAsArrayBuffer(file);
+      ID3.loadTags(url, function() {
+        showTags(url);
+      }, {
+        tags: ["title","artist","picture"],
+        dataReader: FileAPIReader(file)
+      });
     }
 
     /**
