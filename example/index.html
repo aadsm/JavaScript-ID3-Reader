@@ -53,10 +53,12 @@
       document.getElementById('artist').innerHTML = tags.artist;
       var image = tags.picture;
       if (image) {
-        //Caution: old browsers (IE) don't implement Base64
-        //see N. Zakas for fallback:
-        //https://github.com/nzakas/computer-science-in-javascript/tree/master/encodings/base64
-        var base64 = "data:" + image.format + ";base64," + Base64.encodeBytes(image.data);
+        var base64String = "";
+        for (var i = 0; i < image.data.length; i++) {
+            base64String += String.fromCharCode(image.data[i]);
+        }
+        var base64 = "data:" + image.format + ";base64," +
+                window.btoa(base64String);
         document.getElementById('picture').setAttribute('src',base64);
       } else {
         document.getElementById('picture').style.display = "none";

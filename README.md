@@ -119,6 +119,18 @@ for AAC:
         genre: string
     }
 
+### How to show the cover art from the byte array:
+
+You can do this by using a `data:` url.
+
+```javascript
+var base64String = "";
+for (var i = 0; i < image.data.length; i++) {
+    base64String += String.fromCharCode(image.data[i]);
+}
+var dataUrl = "data:" + image.format + ";base64," + window.btoa(base64String);
+```
+
 ### Currently supported frames on ID3:
 
 * APIC/PIC: Attached picture

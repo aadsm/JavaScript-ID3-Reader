@@ -9,9 +9,3 @@ Copyright (c) 2010 António Afonso
 
 Copyright (c) 2010 Joshua Kifer
 [BSD License](http://opensource.org/licenses/BSD-3-Clause)
-
-src/base64.js
-=============
-http://www.webtoolkit.info/javascript-base64.html
-[Creative Commons](http://creativecommons.org/licenses/by/2.0/uk/)
-https://web.archive.org/web/20120906051836/http://www.webtoolkit.info/license
