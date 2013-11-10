@@ -13,7 +13,7 @@
                 var result = event.target.result;
                 fncCallback(new BinaryFile(result));
             };
-            reader.readAsBinaryString(file);
+            reader.readAsArrayBuffer(file);
         }
     };
 })(this);
