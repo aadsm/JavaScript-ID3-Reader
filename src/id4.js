@@ -114,22 +114,31 @@
                     // 4: NULL (usually locale indicator)
                     var dataStart = seek + 16 + 4 + 4;
                     var dataEnd = atomSize - 16 - 4 - 4;
+                    var atomData;
                     switch( type ) {
-                        case 'text': 
-                            tag[atom[0]] = data.getStringWithCharsetAt(dataStart, dataEnd, "UTF-8");
+                        case 'text':
+                            atomData = data.getStringWithCharsetAt(dataStart, dataEnd, "UTF-8");
                             break;
                             
                         case 'uint8':
-                            tag[atom[0]] = data.getShortAt(dataStart);
+                            atomData = data.getShortAt(dataStart);
                             break;
                             
                         case 'jpeg':
                         case 'png':
-                            tag[atom[0]] = {
+                            atomData = {
                                 format  : "image/" + type,
                                 data    : data.getBytesAt(dataStart, dataEnd)
                             };
                             break;
+                    }
+
+                    if (atom[0] === "comment") {
+                        tag[atom[0]] = {
+                            "text": atomData
+                        };
+                    } else {
+                        tag[atom[0]] = atomData;
                     }
                 }
             }
