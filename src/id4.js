@@ -33,7 +33,10 @@
         '©grp': ['grouping'],
         'keyw': ['keyword'],
         '©lyr': ['lyrics'],
-        '©gen': ['genre']
+        '©cmt': ['comment'],
+        'tmpo': ['tempo'],
+        'cpil': ['compilation'],
+        'disk': ['disc']
     };
 
     ID4.loadData = function(data, callback) {
