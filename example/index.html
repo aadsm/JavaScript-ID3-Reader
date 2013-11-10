@@ -13,8 +13,9 @@
 <body>
   <div>
     <input type="file" id="file" onchange="loadFile(this)">
-    <p id="title"></p>
-    <p id="artist"></p>
+    <p><b>Title:</b> <span id="title"></span></p>
+    <p><b>Artist:</b> <span id="artist"></span></p>
+    <p><b>Album:</b> <span id="album"></span></p>
     <img id="picture" src="" alt= "picture extracted from ID3" />
   </div>
 
@@ -25,8 +26,9 @@
     //sample.mp3 sits on your domain
     ID3.loadTags("sample.mp3", function() {
       showTags("sample.mp3");
-    },
-    {tags: ["title","artist","picture"]});
+    }, {
+      tags: ["title","artist","album","picture"]
+    });
 
     /**
      * Loading the tags using the FileAPI.
@@ -38,7 +40,7 @@
       ID3.loadTags(url, function() {
         showTags(url);
       }, {
-        tags: ["title","artist","picture"],
+        tags: ["title","artist","album","picture"],
         dataReader: FileAPIReader(file)
       });
     }
@@ -49,8 +51,9 @@
     function showTags(url) {
       var tags = ID3.getAllTags(url);
       console.log(tags);
-      document.getElementById('title').innerHTML = tags.title;
-      document.getElementById('artist').innerHTML = tags.artist;
+      document.getElementById('title').textContent = tags.title || "";
+      document.getElementById('artist').textContent = tags.artist || "";
+      document.getElementById('album').textContent = tags.album || "";
       var image = tags.picture;
       if (image) {
         var base64String = "";
