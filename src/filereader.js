@@ -5,9 +5,9 @@
  */
 
 (function(ns) {
-    ns["FileAPIReader"] = function(file) {
+    ns["FileAPIReader"] = function(file, opt_reader) {
         return function(url, fncCallback, fncError) {
-            var reader = new FileReader();
+            var reader = opt_reader || new FileReader();
 
             reader.onload = function(event) {
                 var result = event.target.result;
