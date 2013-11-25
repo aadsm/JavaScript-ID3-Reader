@@ -47,6 +47,21 @@ ID3.loadTags("filename.mp3", function() {
 },
 {tags: ["comment", "track", "lyrics"]});
 ```
+
+File API
+--------
+Reading a music file through the File API can be done by specifying the `FileAPIReader` data reader:
+
+```javascript
+ID3.loadTags("filename.mp3", function() {
+    var tags = ID3.getAllTags("filename.mp3");
+    alert(tags.comment + " - " + tags.track + ", " + tags.lyrics);
+}, {
+    dataReader: FileAPIReader(file)
+});
+```
+`file` is a `File` object as defined by the [File API](http://www.w3.org/TR/FileAPI/).
+
 Example
 -------
 See `/example` for additional information.
