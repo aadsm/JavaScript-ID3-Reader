@@ -1,4 +1,4 @@
-CLOSURE_COMPILER=/usr/local/closure-compiler/compiler.jar
+CLOSURE_COMPILER=./compiler.jar
 
 java -jar "$CLOSURE_COMPILER" \
     --compilation_level ADVANCED_OPTIMIZATIONS \
