@@ -85,7 +85,7 @@
                 
             case '3':
             case '4':
-                var format = data.getStringWithCharsetAt(offset+1, length - (offset-start), charset);
+                var format = data.getStringWithCharsetAt(offset+1, length - (offset-start), '');
                 offset += 1 + format.bytesReadCount;
                 break;
         }
