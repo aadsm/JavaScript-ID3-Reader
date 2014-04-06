@@ -96,7 +96,7 @@ var BufferedBinaryAjax = function(strUrl, fncCallback, fncError) {
 			if (fncCallback) {
 				if (typeof(oHTTP.onload) != "undefined") {
 					oHTTP.onload = function() {
-						if (oHTTP.status == "200") {
+						if (oHTTP.status == "200" || oHTTP.status == "206") {
 							fncCallback(this);
 						} else {
 							if (fncError) {
@@ -114,7 +114,7 @@ var BufferedBinaryAjax = function(strUrl, fncCallback, fncError) {
 				} else {
 					oHTTP.onreadystatechange = function() {
 						if (oHTTP.readyState == 4) {
-							if (oHTTP.status == "200") {
+							if (oHTTP.status == "200" || oHTTP.status == "206") {
 								fncCallback(this);
 							} else {
 								if (fncError) {
