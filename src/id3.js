@@ -60,7 +60,7 @@
                     if( cb ) cb();
                 });
             });
-        });     
+        }, options["onError"]);
     };
 
     ID3.getAllTags = function(url) {

@@ -35,10 +35,18 @@ var BufferedBinaryAjax = function(strUrl, fncCallback, fncError) {
 							oHTTP.fileSize = iFileSize || oHTTP.getResponseHeader("Content-Length");
 							fncCallback(oHTTP);
 						} else {
-							if (fncError) fncError();
+							if (fncError) {
+                                fncError({error: "xhr", "xhr": oHTTP});
+                            }
 						}
 						oHTTP = null;
 					};
+                    if (fncError) {
+                        oHTTP.onerror = function() {
+                            fncError({error: "xhr", "xhr": oHTTP});
+                            oHTTP = null;
+                        };
+                    }
 				} else {
 					oHTTP.onreadystatechange = function() {
 						if (oHTTP.readyState == 4) {
@@ -46,7 +54,9 @@ var BufferedBinaryAjax = function(strUrl, fncCallback, fncError) {
 								oHTTP.fileSize = iFileSize || oHTTP.getResponseHeader("Content-Length");
 								fncCallback(oHTTP);
 							} else {
-								if (fncError) fncError();
+								if (fncError) {
+                                    fncError({error: "xhr", "xhr": oHTTP});
+                                }
 							}
 							oHTTP = null;
 						}
@@ -65,7 +75,9 @@ var BufferedBinaryAjax = function(strUrl, fncCallback, fncError) {
 
 			oHTTP.send(null);
 		} else {
-			if (fncError) fncError();
+			if (fncError) {
+                fncError({error: "Unable to create XHR object"});
+            }
 		}
 	}
     function createRequest() {
@@ -87,17 +99,27 @@ var BufferedBinaryAjax = function(strUrl, fncCallback, fncError) {
 						if (oHTTP.status == "200") {
 							fncCallback(this);
 						} else {
-							if (fncError) fncError();
+							if (fncError) {
+                                fncError({error: "xhr", "xhr": oHTTP});
+                            }
 						}
 						oHTTP = null;
 					};
+                    if (fncError) {
+                        oHTTP.onerror = function() {
+                            fncError({error: "xhr", "xhr": oHTTP});
+                            oHTTP = null;
+                        };
+                    }
 				} else {
 					oHTTP.onreadystatechange = function() {
 						if (oHTTP.readyState == 4) {
 							if (oHTTP.status == "200") {
 								fncCallback(this);
 							} else {
-								if (fncError) fncError();
+								if (fncError) {
+                                    fncError({error: "xhr", "xhr": oHTTP});
+                                }
 							}
 							oHTTP = null;
 						}
@@ -107,7 +129,9 @@ var BufferedBinaryAjax = function(strUrl, fncCallback, fncError) {
 			oHTTP.open("HEAD", strURL, true);
 			oHTTP.send(null);
 		} else {
-			if (fncError) fncError();
+			if (fncError) {
+                fncError({error: "Unable to create XHR object"});
+            }
 		}
 	}
     
@@ -246,7 +270,8 @@ var BufferedBinaryAjax = function(strUrl, fncCallback, fncError) {
 			function(oHTTP) {
 				var iLength = parseInt(oHTTP.getResponseHeader("Content-Length"),10) || -1;
 				fncCallback(new BufferedBinaryFile(strUrl, iLength));
-			}
+			},
+            fncError
 		);
     }
     

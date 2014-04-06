@@ -48,6 +48,22 @@ ID3.loadTags("filename.mp3", function() {
 {tags: ["comment", "track", "lyrics"]});
 ```
 
+handling errors:
+```javascript
+ID3.loadTags("http://localhost/filename.mp3", function() {
+    var tags = ID3.getAllTags("http://localhost/filename.mp3");
+    alert(tags.comment + " - " + tags.track + ", " + tags.lyrics);
+},
+{
+    tags: ["comment", "track", "lyrics"],
+    onError: function(reason) {
+        if (reason.error === "xhr") {
+            console.log("There was a network error: ", reason.xhr);
+        }
+    }
+});
+```
+
 File API
 --------
 Reading a music file through the File API can be done by specifying the `FileAPIReader` data reader:
@@ -76,6 +92,11 @@ Documentation
     `options` - Optional parameters.
     `options.tags` - The array of tags and/or shortcuts to read from the ID3 block. Default value is: `["title", "artist", "album", "track"]`
     `options.dataReader` - The function used to create the data reader out of a url. It receives (`url`, `success`: callback function that returns the data reader, `fail`: callback function to inform an error setting up the reader). By default it will be BufferedBinaryAjax.
+    `options.onError` - The function that will be called when an error occurs
+    . It receives one argument with an error object. The object has an `error`
+     property indicating the type of error. In the case the error type is
+     `"xhr"` then an aditional `xhr` property is available with the XHR
+     object for inspection.
 
 `ID3.getAllTags(url)`
     `url` - The URL of the mp3 file to read, this must be the same value given to `ID3.loadTags()`.
