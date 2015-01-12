@@ -189,6 +189,17 @@ var dataUrl = "data:" + image.format + ";base64," + window.btoa(base64String);
 
 A comprehensive list of all tags defined in the specification can be found [here](http://www.id3.org/id3v2.3.0#head-e4b3c63f836c3eb26a39be082065c21fba4e0acc)
 
+Cross-Domain Requests (CORS)
+----------------------------
+When doing CORS requests the browser is not able to read all response HTTP headers unless the response explicitly allows it to.
+You need to add the following headers to the response:
+```
+Access-Control-Allow-Origin: 
+Access-Control-Allow-Headers: If-Modified-Since,Range
+Access-Control-Expose-Headers: Accept-Ranges,Content-Encoding,Content-Length,Content-Range
+```
+Otherwise you could get the error `TypeError: block is undefined @ id3/bufferedbinaryajax.js:215`
+
 Authors
 -------
 * Jacob Seidelin
