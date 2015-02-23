@@ -236,10 +236,12 @@ var BufferedBinaryAjax = function(strUrl, fncCallback, fncError) {
          */
 		this.getByteAt = function(iOffset) {
 		    var block = getBlockAtOffset(iOffset);
-		    if( typeof block.data == "string" ) {
+		    if( block && typeof block.data == "string" ) {
 		        return block.data.charCodeAt(iOffset - block.offset) & 0xFF;
-		    } else if( typeof block.data == "unknown" ) {
+		    } else if( block && typeof block.data == "unknown" ) {
 		        return IEBinary_getByteAt(block.data, iOffset - block.offset);
+		    } else {
+		    	return ""
 		    }
 		};
 		
