@@ -64,6 +64,10 @@ ID3.loadTags("http://localhost/filename.mp3", function() {
 });
 ```
 
+### Cordova / PhoneGap
+
+[Raymond Camden](https://github.com/cfjedimaster) wrote a pretty nice blog post on this topic: http://www.raymondcamden.com/2015/04/30/working-with-mp3s-id3-and-phonegapcordova-2
+
 File API
 --------
 Reading a music file through the File API can be done by specifying the `FileAPIReader` data reader:
