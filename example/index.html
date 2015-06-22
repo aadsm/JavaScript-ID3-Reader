@@ -9,14 +9,7 @@
   <script src="../dist/id3-minimized.js" type="text/javascript"></script>
 
   <!-- Can be handy for debugging -->
-  <!--script src="../src/binaryfile.js" type="text/javascript"></script>
-  <script src="../src/bufferedbinaryajax.js" type="text/javascript"></script>
-  <script src="../src/filereader.js" type="text/javascript"></script>
-  <script src="../src/id3.js" type="text/javascript"></script>
-  <script src="../src/id3v1.js" type="text/javascript"></script>
-  <script src="../src/id3v2.js" type="text/javascript"></script>
-  <script src="../src/id3v2frames.js" type="text/javascript"></script>
-  <script src="../src/stringutils.js" type="text/javascript"></script-->
+  <!--script src="../src/id3-debug.js" type="text/javascript"></script-->
 
 </head>
 
@@ -51,7 +44,7 @@
         showTags(url);
       }, {
         tags: ["title","artist","album","picture"],
-        dataReader: FileAPIReader(file)
+        dataReader: ID3.FileAPIReader(file)
       });
     }
 

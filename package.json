@@ -1,0 +1,45 @@
+{
+  "name": "id3-reader",
+  "version": "1.0.0",
+  "description": "ID3 tags reader in JavaScript (ID3v1, ID3v2 and AAC)",
+  "main": "src/id3.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/aadsm/JavaScript-ID3-Reader.git"
+  },
+  "keywords": [
+    "ID3",
+    "tags",
+    "AAC",
+    "mp3",
+    "m4a",
+    "audio"
+  ],
+  "author": "António Afonso <antonio.afonso@gmail>",
+  "contributors": [
+    {
+      "name": "Jacob Seidelin"
+    },
+    {
+      "name": "Joshua Kifer"
+    },
+    {
+      "name": "Jesse Ditson",
+      "email": "jesse.ditson@gmail.com"
+    }
+  ],
+  "license": "BSD-3-Clause",
+  "bugs": {
+    "url": "https://github.com/aadsm/JavaScript-ID3-Reader/issues"
+  },
+  "homepage": "https://github.com/aadsm/JavaScript-ID3-Reader#readme",
+  "dependencies": {
+    "atob": "^1.1.2",
+    "btoa": "^1.1.2",
+    "xmlhttprequest": "^1.7.0"
+  },
+  "devDependencies": {
+    "browserify": "^10.2.4",
+    "google-closure-compiler": "20151015.0.0"
+  }
+}

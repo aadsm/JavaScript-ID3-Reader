@@ -3,7 +3,7 @@
  * Copyright (c) 2010 António Afonso, antonio.afonso gmail, http://www.aadsm.net/
  * MIT License [http://www.opensource.org/licenses/mit-license.php]
  *
- * Adapted from Binary Ajax 0.1.5 
+ * Adapted from Binary Ajax 0.1.5
  */
 
 /**
@@ -13,7 +13,11 @@
  * @param {function(BufferedBinaryFile)} fncCallback The function that will be invoked when the BufferedBinaryFile is ready to be used.
  * @param {function()} fncError The function that will be invoked when an error occrus, for instance, the file pointed by the URL is doesn't exist.
  */
+
+var BinaryFile = require('./binaryfile');
+
 var BufferedBinaryAjax = function(strUrl, fncCallback, fncError) {
+
     function sendRequest(strURL, fncCallback, fncError, aRange, bAcceptRanges, iFileSize, bAsync) {
 		var oHTTP = createRequest();
 		if (oHTTP) {
@@ -82,10 +86,12 @@ var BufferedBinaryAjax = function(strUrl, fncCallback, fncError) {
 	}
     function createRequest() {
 		var oHTTP = null;
-		if (window.XMLHttpRequest) {
-			oHTTP = new XMLHttpRequest();
+        if (typeof window === 'undefined') {
+            oHTTP = new (require("xmlhttprequest").XMLHttpRequest)();
+        } else if (window.XMLHttpRequest) {
+			oHTTP = new window.XMLHttpRequest();
 		} else if (window.ActiveXObject) {
-			oHTTP = new ActiveXObject("Microsoft.XMLHTTP");
+			oHTTP = new window.ActiveXObject("Microsoft.XMLHTTP");
 		}
 		return oHTTP;
 	}
@@ -134,7 +140,7 @@ var BufferedBinaryAjax = function(strUrl, fncCallback, fncError) {
             }
 		}
 	}
-    
+
     /**
      * @class Reads a remote file without having to download it all.
      *
@@ -153,21 +159,21 @@ var BufferedBinaryAjax = function(strUrl, fncCallback, fncError) {
         var downloadedBytesCount = 0;
         var binaryFile = new BinaryFile("", 0, iLength);
         var blocks = [];
-        
+
         blockSize = blockSize || 1024*2;
         blockRadius = (typeof blockRadius === "undefined") ? 0 : blockRadius;
         blockTotal = ~~((iLength-1)/blockSize) + 1;
-        
+
         function getBlockRangeForByteRange(range) {
             var blockStart = ~~(range[0]/blockSize) - blockRadius;
             var blockEnd = ~~(range[1]/blockSize)+1 + blockRadius;
-            
+
             if( blockStart < 0 ) blockStart = 0;
             if( blockEnd >= blockTotal ) blockEnd = blockTotal-1;
-            
+
             return [blockStart, blockEnd];
         }
-        
+
         // TODO: wondering if a "recently used block" could help things around
         //       here.
         function getBlockAtOffset(offset) {
@@ -175,7 +181,7 @@ var BufferedBinaryAjax = function(strUrl, fncCallback, fncError) {
             waitForBlocks(blockRange);
             return blocks[~~(offset/blockSize)];
         }
-        
+
         /**
          * @param {?function()} callback If a function is passed then this function will be asynchronous and the callback invoked when the blocks have been loaded, otherwise it blocks script execution until the request is completed.
          */
@@ -207,7 +213,7 @@ var BufferedBinaryAjax = function(strUrl, fncCallback, fncError) {
                         data: http.responseBody || http.responseText,
                         offset: range[0]
                     };
-                    
+
                     for( var i = blockRange[0]; i <= blockRange[1]; i++ ) {
                         blocks[i] = block;
                     }
@@ -221,7 +227,7 @@ var BufferedBinaryAjax = function(strUrl, fncCallback, fncError) {
                 !!callback
             );
         }
-        
+
         // Mixin all BinaryFile's methods.
         // Not using prototype linking since the constructor needs to know
         // the length of the file.
@@ -231,7 +237,7 @@ var BufferedBinaryAjax = function(strUrl, fncCallback, fncError) {
                 this[key] = binaryFile[key];
             }
         }
-        /** 
+        /**
          * @override
          */
 		this.getByteAt = function(iOffset) {
@@ -244,7 +250,7 @@ var BufferedBinaryAjax = function(strUrl, fncCallback, fncError) {
 		    	return ""
 		    }
 		};
-		
+
 		/**
 		 * Gets the number of total bytes that have been downloaded.
 		 *
@@ -253,7 +259,7 @@ var BufferedBinaryAjax = function(strUrl, fncCallback, fncError) {
 		this.getDownloadedBytesCount = function() {
 		    return downloadedBytesCount;
 		};
-		
+
 		/**
 		 * Downloads the byte range given. Useful for preloading.
 		 *
@@ -265,10 +271,10 @@ var BufferedBinaryAjax = function(strUrl, fncCallback, fncError) {
 		    waitForBlocks(blockRange, callback);
 		};
     }
-    
+
     function init() {
         getHead(
-			strUrl, 
+			strUrl,
 			function(oHTTP) {
 				var iLength = parseInt(oHTTP.getResponseHeader("Content-Length"),10) || -1;
 				fncCallback(new BufferedBinaryFile(strUrl, iLength));
@@ -276,7 +282,8 @@ var BufferedBinaryAjax = function(strUrl, fncCallback, fncError) {
             fncError
 		);
     }
-    
+
     init();
 };
 
+module.exports = BufferedBinaryAjax;

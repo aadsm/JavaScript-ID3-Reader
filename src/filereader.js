@@ -4,16 +4,18 @@
  *
  */
 
-(function(ns) {
-    ns["FileAPIReader"] = function(file, opt_reader) {
-        return function(url, fncCallback, fncError) {
-            var reader = opt_reader || new FileReader();
+var BinaryFile = require('./binaryfile')
 
-            reader.onload = function(event) {
-                var result = event.target.result;
-                fncCallback(new BinaryFile(result));
-            };
-            reader.readAsBinaryString(file);
-        }
-    };
-})(this);
+var FileAPIReader = function(file, opt_reader) {
+    return function(url, fncCallback, fncError) {
+        var reader = opt_reader || new FileReader();
+
+        reader.onload = function(event) {
+            var result = event.target.result;
+            fncCallback(new BinaryFile(result));
+        };
+        reader.readAsBinaryString(file);
+    }
+};
+
+module.exports = FileAPIReader;

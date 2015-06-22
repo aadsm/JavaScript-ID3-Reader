@@ -1,3 +1,5 @@
+var StringUtils = require('./stringutils');
+
 /**
  * @constructor
  */
@@ -130,10 +132,10 @@ function BinaryFile(strData, iDataOffset, iDataLength) {
 		return String.fromCharCode(this.getByteAt(iOffset));
 	};
 	this.toBase64 = function() {
-		return window.btoa(data);
+		return b64utils.btoa(data);
 	};
 	this.fromBase64 = function(strBase64) {
-		data = window.atob(strBase64);
+		data = b64utils.atob(strBase64);
 	};
 
     this.loadRange = function(range, callback) {
@@ -141,12 +143,24 @@ function BinaryFile(strData, iDataOffset, iDataLength) {
     };
 }
 
-var js = document.createElement('script');
-js.type = 'text/vbscript';
-js.textContent = "Function IEBinary_getByteAt(strBinary, iOffset)\r\n" +
-    "	IEBinary_getByteAt = AscB(MidB(strBinary,iOffset+1,1))\r\n" +
-    "End Function\r\n" +
-    "Function IEBinary_getLength(strBinary)\r\n" +
-    "	IEBinary_getLength = LenB(strBinary)\r\n" +
-    "End Function\r\n";
-document.getElementsByTagName('head')[0].appendChild(js);
+var b64utils = {};
+
+if (typeof document !== 'undefined') {
+	var js = document.createElement('script');
+	js.type = 'text/vbscript';
+	js.textContent = "Function IEBinary_getByteAt(strBinary, iOffset)\r\n" +
+	    "	IEBinary_getByteAt = AscB(MidB(strBinary,iOffset+1,1))\r\n" +
+	    "End Function\r\n" +
+	    "Function IEBinary_getLength(strBinary)\r\n" +
+	    "	IEBinary_getLength = LenB(strBinary)\r\n" +
+	    "End Function\r\n";
+	document.getElementsByTagName('head')[0].appendChild(js);
+
+	b64utils.btoa = window.btoa;
+	b64utils.atob = window.atob;
+} else {
+	b64utils.btoa = require('btoa');
+	b64utils.atob = require('atob');
+}
+
+module.exports = BinaryFile;

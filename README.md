@@ -70,14 +70,14 @@ ID3.loadTags("http://localhost/filename.mp3", function() {
 
 File API
 --------
-Reading a music file through the File API can be done by specifying the `FileAPIReader` data reader:
+Reading a music file through the File API can be done by using the `FileAPIReader` data reader packaged with ID3:
 
 ```javascript
 ID3.loadTags("filename.mp3", function() {
     var tags = ID3.getAllTags("filename.mp3");
     alert(tags.comment + " - " + tags.track + ", " + tags.lyrics);
 }, {
-    dataReader: FileAPIReader(file)
+    dataReader: ID3.FileAPIReader(file)
 });
 ```
 `file` is a `File` object as defined by the [File API](http://www.w3.org/TR/FileAPI/).
@@ -197,14 +197,71 @@ A comprehensive list of all tags defined in the specification can be found [here
 When doing CORS requests the browser is not able to read all response HTTP headers unless the response explicitly allows it to.
 You need to add the following headers to the response:
 ```
-Access-Control-Allow-Origin: 
+Access-Control-Allow-Origin:
 Access-Control-Allow-Headers: If-Modified-Since,Range
 Access-Control-Expose-Headers: Accept-Ranges,Content-Encoding,Content-Length,Content-Range
 ```
 Otherwise you could get the error `TypeError: block is undefined @ id3/bufferedbinaryajax.js:215`
+
+### Module Loaders
+This package is packaged with browserify `--standalone`, so it can be used with your favorite flavor of module loaders:
+
+- requirejs:
+
+```
+require('ID3', function (ID3) {
+  // you may now use ID3 methods on the ID3 object.
+});
+```
+
+- CommonJS:
+
+```
+var ID3 = require('ID3');
+// do stuff with ID3
+```
+
+- SES (Secure Ecma Script)
+
+```
+var ID3 = ses.ID3();
+// ID3 is available now.
+```
+
+- No module loader:
+
+```
+var ID3 = window.ID3
+// ID3 is exposed as a global, so you can just use it directly or pull it off the window to be explicit.
+```
+
+### Node.js
+
+This library is also npm compatible, so it can be required. As of this writing it is not published to the npm repository, but that should be remedied soon.
+
+You can use ID3 either via browserify or directly on the server:
+
+```
+var ID3 = require('id3-reader')
+
+var fileurl = "https://example.com/path/to/music.mp3"
+
+ID3.loadTags(fileurl, function() {
+    var tags = ID3.getAllTags(fileurl);
+    console.log(tags);
+    // tags are now available.
+}, {
+    onError: function(reason) {
+        if (reason.error === "xhr") {
+            console.log("There was a network error: ", reason.xhr);
+        }
+    }
+});
+```
 
 Authors
 -------
 * Jacob Seidelin
 * António Afonso
 * Joshua Kifer
+* Jesse Ditson

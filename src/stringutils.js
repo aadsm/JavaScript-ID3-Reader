@@ -111,3 +111,5 @@ var StringUtils = {
         return string;
     }
 };
+
+module.exports = StringUtils;
