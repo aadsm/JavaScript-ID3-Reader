@@ -1,3 +1,11 @@
+:warning: This project has been superseded by [jsmediatags](https://github.com/aadsm/jsmediatags) and is no longer under maintainance, the reasons:
+* Browser and node support ([find it on npm](https://www.npmjs.com/package/jsmediatags)).
+* Better code structure
+* Extensible
+* Unit tests
+
+Use this [guide](https://github.com/aadsm/jsmediatags#javascript-id3-reader) to migrate to `jsmediatags`.
+
 JavaScript ID3 Reader
 =====================
 
