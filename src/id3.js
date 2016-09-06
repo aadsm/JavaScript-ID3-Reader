@@ -59,17 +59,22 @@ ID3.clearAll = function() {
 ID3.loadTags = function(url, cb, options) {
     options = options || {};
     var dataReader = options["dataReader"] || BufferedBinaryAjax;
+    var onError = options["onError"];
 
     dataReader(url, function(data) {
         // preload the format identifier
         data.loadRange(_formatIDRange, function() {
             var reader = getTagReader(data);
             reader.loadData(data, function() {
-                readTags(reader, data, url, options["tags"]);
+                try {
+                    readTags(reader, data, url, options["tags"]);
+                } catch (err) {
+                    if (onError) onError(err);
+                }
                 if( cb ) cb();
             });
         });
-    }, options["onError"]);
+    }, onError);
 };
 
 ID3.getAllTags = function(url) {

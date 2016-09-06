@@ -14,6 +14,7 @@ var FileAPIReader = function(file, opt_reader) {
             var result = event.target.result;
             fncCallback(new BinaryFile(result));
         };
+        reader.onerror = fncError;
         reader.readAsBinaryString(file);
     }
 };
